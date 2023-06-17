@@ -181,16 +181,18 @@ import {
   Req,
   UseGuards,
   Session,
-  Post
+  Post,
+  Res
 } from '@nestjs/common';
 import { User } from './login/user.decorator';
 import { Profile } from 'passport-42';
 import { AuthenticatedGuard } from './login/guards/authenticated.guard';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map } from 'rxjs';
 import { AuthGuard } from '@nestjs/passport';
 import { AppService } from './app.service';
+
 
 @Controller()
 export class AppController {
@@ -257,9 +259,15 @@ export class AppController {
   @UseGuards(AuthGuard('google'))  // Utilisation uniquement du guard pour Google
   async authGoogle(@Req() req) {}
 
-  @Get('auth/google/callback')
+  /*@Get('auth/google/callback')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
-    return this.appService.googleLogin(req);
+    return this.appService.googleLogin(req);*/
+
+  @Get('auth/google/callback')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req, @Res() res: Response) {
+    this.appService.googleLogin(req);
+    res.redirect('/');
   }
 }
